@@ -1,5 +1,7 @@
 import sys
-
+import numpy as np
+import pandas as pd
+import math
 
 def parse_nyt_data(file_path=''):
     """

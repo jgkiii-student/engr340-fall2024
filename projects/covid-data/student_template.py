@@ -69,6 +69,20 @@ def first_question(data):
     """
 
     # your code here
+    df = pd.DataFrame(data, columns=['date','county','state','cases','deaths'])
+
+    df_RC = df[df['county'] == 'Rockingham' and df['cases'] == 1]
+    df_HB = df[df['county'] == 'Harrisonburg' and df['cases'] == 1]
+
+    array_RC = df_RC.to_numpy()
+    array_HB =df_HB.to_numpy()
+
+    RC_COVID_Date = array_RC[0,0]
+    HB_COVID_Date = array_HB[0,0]
+
+    print(f"The first positive COVID case in Rockingham County was on {RC_COVID_Date}")
+    print(f"The first positive COVID case in Harrisonburg was on {HB_COVID_Date}")
+
     return
 
 def second_question(data):
@@ -92,8 +106,8 @@ def third_question(data):
 if __name__ == "__main__":
     data = parse_nyt_data('us-counties.csv')
 
-    for (date, county, state, cases, deaths) in data:
-        print('On ', date, ' in ', county, ' ', state, ' there were ', cases, ' cases and ', deaths, ' deaths')
+    #for (date, county, state, cases, deaths) in data:
+     #   print('On ', date, ' in ', county, ' ', state, ' there were ', cases, ' cases and ', deaths, ' deaths')
 
 
     # write code to address the following question: Use print() to display your responses.

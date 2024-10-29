@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy as sp
 
 """
 Step 0: Select which database you wish to use.
@@ -20,12 +21,16 @@ Step #1: load data in matrix from CSV file; skip first two rows. Call the data s
 
 signal = 0
 ## YOUR CODE HERE ##
+data = np.loadtxt(signal_filepath, skiprows=2, delimiter=',')
 
 """
 Step 2: (OPTIONAL) pass data through LOW PASS FILTER (fs=250Hz, fc=15, N=6). These may not be correctly in radians
 """
 
 ## YOUR CODE HERE ##
+data = np.convolve(data, )
+Second_Parameter = (2*15)/250
+data = sp.butter(data,fs=250Hz, Wn=Second_Parameter)
 
 """
 Step 3: Pass data through weighted differentiator

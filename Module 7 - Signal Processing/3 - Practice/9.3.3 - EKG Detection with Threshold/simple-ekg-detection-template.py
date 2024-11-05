@@ -1,3 +1,5 @@
+from asyncio import timeout
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
@@ -23,7 +25,7 @@ Step 2: Determine how much data to use...
 """
 # If you wish to only run on ~10s of data uncomment the line below
 # if you wish to run on all data, comment out this line
-signal = signal[0:3300]
+signal = signal[0:10000]
 
 
 """
@@ -32,10 +34,10 @@ Adjust the values for threshold and timeout to change the detection method/appro
 """
 
 # set a detection threshold (YOUR VALUE BELOW)
-detection_threshold = -1
+detection_threshold = 2
 
 # set a heart beat time out (YOUR VALUE BELOW)
-detection_time_out = -1
+detection_time_out = 50
 
 # track the last time we found a beat
 last_detected_index = -1
@@ -53,9 +55,15 @@ Step 4: Manually iterate through the signal and apply the threshold with timeout
 # loop through signal finding beats
 for value in signal:
     ## Use a conditional statement to see if the signal is above a threshold...
+    if value > detection_threshold and (current_index - last_detected_index) > detection_time_out:
+        beats_detected.append(current_index)
+        last_detected_index = current_index
+        current_index += 1
+    else:
+        current_index += 1
+
 
     ## Once an index is found, place the index in the beats_detected list
-    current_index += 1
 
 print("Within the sample we found ", len(beats_detected), " heart beats with manual search!")
 

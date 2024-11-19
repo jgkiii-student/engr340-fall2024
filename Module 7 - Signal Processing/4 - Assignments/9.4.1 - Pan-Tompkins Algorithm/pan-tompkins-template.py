@@ -1,5 +1,9 @@
 import numpy as np
+import matplotlib as plt
 from ekg_testbench import EKGTestBench
+from scipy.signal import find_peaks
+from scipy.signal import butter
+from scipy.signal import sosfilt
 
 def detect_heartbeats(filepath):
     """
@@ -9,45 +13,74 @@ def detect_heartbeats(filepath):
     beats: the indices of detected heartbeats
     """
     if filepath == '':
+        print("No filepath parameter detected.")
         return list()
 
     # import the CSV file using numpy
     path = filepath
 
     # load data in matrix from CSV file; skip first two rows
-    ## your code here
+
+    data = np.loadtxt(path, skiprows=2, delimiter=',')
 
     # save each vector as own variable
-    ## your code here
+
+    raw_time = data[0:, 0]
+    raw_lead_one = data[0:, 1]
+    raw_lead_two = data[0:, 2]
 
     # identify one column to process. Call that column signal
 
-    signal = -1 ## your code here
+    signal = raw_lead_one ## your code here
 
     # pass data through LOW PASS FILTER (OPTIONAL)
     ## your code here
 
+    fs_sampling_rate = 250  # look at data and calculate the desired sampling rate
+    fc = 15  # sampling "cutoff" for the lowpass filter
+    N_order = 6  # stronger filter response with an increase in N, 'taps'
+
+    weights_low = butter(N=N_order, Wn=fc, btype='lowpass', fs=fs_sampling_rate, output='sos')
+    low_pass_data = sosfilt(weights_low, signal)
+
     # pass data through HIGH PASS FILTER (OPTIONAL) to create BAND PASS result
-    ## your code here
+
+    weights_high = butter(N=N_order, Wn=fc, btype='highpass', fs=fs_sampling_rate, output='sos')
+    bandpass_data = sosfilt(weights_high, low_pass_data) #Takes through highpass filter, becomes bandpass data
 
     # pass data through differentiator
     ## your code here
 
+    diff_data = np.diff(bandpass_data)
+
     # pass data through square function
     ## your code here
+
+    sqr_data = np.square(diff_data)
 
     # pass through moving average window
     ## your code here
 
+    ones_array = np.ones(50)
+    maverage_data = np.convolve(sqr_data, ones_array, mode='same')
+
     # use find_peaks to identify peaks within averaged/filtered data
     # save the peaks result and return as part of testbench result
-
     ## your code here peaks,_ = find_peaks(....)
+
+    peaks, _ = find_peaks(maverage_data, height=2.5, distance=50)
+    print(len(peaks))
 
     beats = None
 
+    plt.plot(maverage_data)
+    plt.title('Filtered ECG Signal with Beat Annotations')
+    plt.plot(peaks, maverage_data[peaks], 'X')
+    plt.show()
+
+
     # do not modify this line
-    return signal, beats
+    return signal, peaks
 
 
 # when running this file directly, this will execute first
